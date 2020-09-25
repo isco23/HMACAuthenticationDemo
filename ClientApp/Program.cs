@@ -30,7 +30,7 @@ namespace HMACClient
         static async Task RunAsync()
         {
             Console.WriteLine("Calling Back-End API");
-            string apiAddress = "http://localhost:52459/";
+            string apiAddress = "https://mm-uat.paradigmapps.com/RestApi/ApiCorp";
             HMACDelegatingHandler customDelegatingHandler = new HMACDelegatingHandler();
             HttpClient client = HttpClientFactory.Create(customDelegatingHandler);
             var order = new Order
@@ -43,7 +43,10 @@ namespace HMACClient
             };
 
             //HttpResponseMessage response = await client.PostAsJsonAsync(apiAddress + "api/orders", order);
-            HttpResponseMessage response = await client.GetAsync(apiAddress + "api/orders");
+            //HttpResponseMessage response = await client.GetAsync(apiAddress + "api/orders");
+            string payload = "%7b%0d%0a%09%22RegistrationNumber%22%3a%22121840804%22%0d%0a%7d";
+            HttpResponseMessage response;
+                response = await client.GetAsync($"{apiAddress}?content={payload}");
             if (response.IsSuccessStatusCode)
             {
                 string responseString = await response.Content.ReadAsStringAsync();

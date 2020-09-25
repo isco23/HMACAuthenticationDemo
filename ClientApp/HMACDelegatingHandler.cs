@@ -12,8 +12,9 @@ namespace ClientApp
 {
     public class HMACDelegatingHandler : DelegatingHandler
     {
-        private string APPId = "b9132ed1-4c9f-4a6e-a278-b21865c81df3";
-        private string APIKey = "b3die3TkS8UJ7HMGlU5RCv/JmwaOJPL2gcLEnphF6w0=";
+        private string APPId = "78de8fa021e64c828c5f6c2b6088c740";
+        private string APIKey = "xie3vLC9kCUp6EOsXxP8WQtbaiDT/3MreP5Qd4mgKSU=";
+        private string UserLoginId = "SSBApiAccount";
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request , CancellationToken cancellationToken)
         {
             HttpResponseMessage response = null;
@@ -31,7 +32,7 @@ namespace ClientApp
                 byte[] requestContentHash = md5.ComputeHash(content);
                 requestContentBase64String = Convert.ToBase64String(requestContentHash);
             }
-            string signatureRawData = String.Format("{0}{1}{2}{3}{4}{5}",APPId,requestHttpMethod,requestUri,requestTimeStamp,nonce,requestContentBase64String);
+            string signatureRawData = String.Format("{0}{1}{2}{3}{4}{5}{6}",APPId,UserLoginId,requestHttpMethod,requestUri,requestTimeStamp,nonce,requestContentBase64String);
 
             var secretKeyByteArray = Convert.FromBase64String(APIKey);
             byte[] signature = Encoding.UTF8.GetBytes(signatureRawData);
@@ -39,7 +40,7 @@ namespace ClientApp
             {
                 byte[] signatureBytes = hmac.ComputeHash(signature);
                 string requestSignatureBase64String = Convert.ToBase64String(signatureBytes);
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("hmacauth", string.Format("{0}:{1}:{2}:{3}", APPId, requestSignatureBase64String, nonce, requestTimeStamp));
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("paradigm", string.Format("{0}:{1}:{2}:{3}:{4}", APPId, requestSignatureBase64String, nonce, requestTimeStamp,UserLoginId));
             }
             response = await base.SendAsync(request, cancellationToken);
             return response;            
